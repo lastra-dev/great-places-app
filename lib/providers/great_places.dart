@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 import '../helpers/db_helper.dart';
+import '../helpers/location_helper.dart';
 import '../models/place.dart';
 
 class GreatPlaces with ChangeNotifier {
@@ -12,16 +13,25 @@ class GreatPlaces with ChangeNotifier {
     return [..._items];
   }
 
-  void addPlace(String pickedTitle, File pickedImage) {
+  Future<void> addPlace(
+    String pickedTitle,
+    File pickedImage,
+    PlaceLocation pickedLocation,
+  ) async {
+    final address = await LocationHelper.getAdress(
+      longitude: pickedLocation.longitude,
+      latitude: pickedLocation.latitude,
+    );
+    final updatedLocation = PlaceLocation(
+      latitude: pickedLocation.latitude,
+      longitude: pickedLocation.longitude,
+      address: address,
+    );
     final item = Place(
       id: DateTime.now().toString(),
       image: pickedImage,
       title: pickedTitle,
-      location: const PlaceLocation(
-        latitude: 1,
-        longitude: 1,
-        address: 'a dummy location',
-      ),
+      location: updatedLocation,
     );
     _items.add(item);
     notifyListeners();
@@ -30,6 +40,9 @@ class GreatPlaces with ChangeNotifier {
       'id': item.id,
       'title': item.title,
       'image': pickedImage.path,
+      'loc_lat': item.location.latitude,
+      'loc_lng': item.location.longitude,
+      'address': item.location.address,
     });
   }
 
@@ -38,15 +51,14 @@ class GreatPlaces with ChangeNotifier {
     _items = placesData
         .map(
           (item) => Place(
-            id: item['id'].toString(),
-            title: item['title'].toString(),
-            image: File(item['image'].toString()),
-            location: const PlaceLocation(
-              address: '',
-              longitude: 0,
-              latitude: 0,
-            ),
-          ),
+              id: item['id'].toString(),
+              title: item['title'].toString(),
+              image: File(item['image'].toString()),
+              location: PlaceLocation(
+                latitude: item['loc_lat'] as double,
+                longitude: item['loc_lng'] as double,
+                address: item['address'].toString(),
+              )),
         )
         .toList();
     notifyListeners();
