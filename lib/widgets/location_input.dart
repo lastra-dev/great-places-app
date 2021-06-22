@@ -30,7 +30,7 @@ class _LocationInputState extends State<LocationInput> {
       final Location location = Location();
       final locData = await location.getLocation();
       _showPreview(locData.latitude!, locData.longitude!);
-      widget.onSelectPlace(locData.longitude, locData.latitude);
+      widget.onSelectPlace(locData.latitude, locData.longitude);
     } catch (error) {
       return;
     }
