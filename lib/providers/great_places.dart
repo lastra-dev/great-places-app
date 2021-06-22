@@ -17,7 +17,7 @@ class GreatPlaces with ChangeNotifier {
       id: DateTime.now().toString(),
       image: pickedImage,
       title: pickedTitle,
-      location: PlaceLocation(
+      location: const PlaceLocation(
         latitude: 1,
         longitude: 1,
         address: 'a dummy location',
@@ -41,7 +41,7 @@ class GreatPlaces with ChangeNotifier {
             id: item['id'].toString(),
             title: item['title'].toString(),
             image: File(item['image'].toString()),
-            location: PlaceLocation(
+            location: const PlaceLocation(
               address: '',
               longitude: 0,
               latitude: 0,
